@@ -1,11 +1,10 @@
 #https://www.geeksforgeeks.org/ml-intercluster-and-intracluster-distance/
 import math
    
-def clustervalidation(data):
+def clusterDistanceMessures(data):
     [pos,neu,neg] = groupdata(data)
-    clusters = [pos,neu,neg,data]
+    clusters = [pos,neu,neg]#[pos,neu,neg,data]
     columnstrings = ['Len', 'Likes','Retweets']
-    PrintAverageforCluster(clusters,columnstrings)
     intradist = meanIntraDistance(clusters,columnstrings)
     Interdist = meanInterDistance(clusters,columnstrings)
     return [intradist,Interdist]
@@ -60,6 +59,7 @@ def clusterInterDistanceToAvg(Averages):
     for singleAvg in Averages:
         for someOtherAvg in Averages:
             rowress.append(abs(singleAvg - someOtherAvg))
+        rowress = sum(rowress)
         ret.append(rowress)
         rowress = []   
     return ret

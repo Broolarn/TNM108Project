@@ -17,44 +17,46 @@ url = r'TwitterData\condensed_2018.json'
 data = pre.preProcs(url)
 # Display of first 10 elements from DataFrame
 
+showDatastructs = False
+if(showDatastructs==True):
+    print(data.head(10))
+    # Pick tweets with more favorits and more retweets:
+    mean = np.mean(data['Len'])
+    print("Mean Length in tweets: {}".format(mean))
 
-print(data.head(10))
+vis = False
+if(vis==True):
+    dv.maxFavsAndRetweets(data['Likes'],data['Retweets'],data)
+    dv.timeSeriesVis([data['Len'].values],data['Date'], ['Len'])
+    dv.timeSeriesVis([data['Likes'].values, data['Retweets'].values],data['Date'], ['Likes','Retweets'])
+    dv.pieChartSources(data["Source"])
 
-# Pick tweets with more favorits and more retweets:
-mean = np.mean(data['Len'])
-print("Mean Length in tweets: {}".format(mean))
+
+sentimentAnalysis= True
+if(sentimentAnalysis==True):
+    # We create a column with the result of the analysis:
+    data['SA'] = np.array([ sa.analize_sentiment(tweet) for tweet in data['Tweets'] ])
+
+    # We display the updated dataframe with the new column:
+    print(data.head(10))
+    [pos_tweets,neu_tweets,neg_tweets] = sa.analize_results(data)
+
+clustering = True
+if(clustering==True):
+    [intra,inter] = cval.clusterDistanceMessures(data)
+
+    printavg = False
+    if(printavg ==True):
+        [pos,neu,neg] = cval.groupdata(data)
+        clusters = [pos,neu,neg]#[pos,neu,neg,data]
+        columnstrings = ['Len', 'Likes','Retweets']
+        
+        for x in range(0,len(inter)):
+            print("==============")
+            for y in range(len(inter[0])):
+                print(inter[x][y])
+
+    print("intra distance is: " + str(intra))
+    print("inter distance is: " + str(inter))
 
 
-#dv.maxFavsAndRetweets(data['Likes'],data['Retweets'],data)
-
-#dv.timeSeriesVis([data['Len'].values],data['Date'], ['Len'])
-#dv.timeSeriesVis([data['Likes'].values, data['Retweets'].values],data['Date'], ['Likes','Retweets'])
-
-#dv.pieChartSources(data["Source"])
-
-# We create a column with the result of the analysis:
-data['SA'] = np.array([ sa.analize_sentiment(tweet) for tweet in data['Tweets'] ])
-
-# We display the updated dataframe with the new column:
-print(data.head(10))
-
-[pos_tweets,neu_tweets,neg_tweets] = sa.analize_results(data)
-
-[intra,infra] = cval.clustervalidation(data)
-[pos,neu,neg] = cval.groupdata(data)
-printavg = False
-if(printavg ==True):
-    clusters = [pos,neu,neg,data]
-    columnstrings = ['Len', 'Likes','Retweets']
-    print("==============")
-    cval.PrintAverageforCluster(clusters,columnstrings)
-    print(type(infra))
-    print("infra")
-    for x in range(0,len(infra)):
-        print("==============")
-        for y in range(len(infra[0])):
-            print(infra[x][y])
-    #import numpy as np
-    #print(np.matrix(infra))
-print("intra distance is: " + str(intra))
-print("infra distance is: " + str(infra))
