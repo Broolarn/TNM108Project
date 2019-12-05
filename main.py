@@ -41,6 +41,20 @@ print(data.head(10))
 [pos_tweets,neu_tweets,neg_tweets] = sa.analize_results(data)
 
 [intra,infra] = cval.clustervalidation(data)
-
+[pos,neu,neg] = cval.groupdata(data)
+printavg = False
+if(printavg ==True):
+    clusters = [pos,neu,neg,data]
+    columnstrings = ['Len', 'Likes','Retweets']
+    print("==============")
+    cval.PrintAverageforCluster(clusters,columnstrings)
+    print(type(infra))
+    print("infra")
+    for x in range(0,len(infra)):
+        print("==============")
+        for y in range(len(infra[0])):
+            print(infra[x][y])
+    #import numpy as np
+    #print(np.matrix(infra))
 print("intra distance is: " + str(intra))
 print("infra distance is: " + str(infra))

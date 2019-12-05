@@ -5,44 +5,72 @@ def clustervalidation(data):
     [pos,neu,neg] = groupdata(data)
     clusters = [pos,neu,neg,data]
     columnstrings = ['Len', 'Likes','Retweets']
-    calcAverageForColumns(clusters,columnstrings)
-    infradist = calcinfradist(pos,neu,neg,data)
-    intradist = calcintradist(pos,neu,neg,data)
-    return [intradist,infradist]
+    PrintAverageforCluster(clusters,columnstrings)
+    intradist = meanIntraDistance(clusters,columnstrings)
+    Interdist = meanInterDistance(clusters,columnstrings)
+    return [intradist,Interdist]
 
 def groupdata(data):
-    #print(data['SA']==0)
     pos = data[data['SA']>0]
     neu = data[data['SA']==0]
     neg = data[data['SA']<0]
     return [pos,neu,neg]
 
-def calcAverageForColumns(clusters,columnstr):
+def meanIntraDistance(clusters,columnstr):
     avgsForColumns = []
     for colstr in columnstr:
-        avgsForcolstr = calcClustersMeanIntraDistance(clusters,colstr) 
-        print( "For " + colstr +" the average values are: " )
-        print(avgsForcolstr)
-        avgsForColumns.append(avgsForcolstr)
+        avgIntraDistForColstr = ClustersMeanIntraDistance(clusters,colstr) 
+        avgsForColumns.append(avgIntraDistForColstr)
     return avgsForColumns
 
-def calcClustersMeanIntraDistance(Clusters,columnstr):
+def ClustersMeanIntraDistance(Clusters,columnstr):
     ret = []
     for ci in Clusters:
         averageVal = numericMean(ci[columnstr])#averageForFeatureInCluster(ci,columnstr)
-        intraDist = clusterIntraDistanceToAvg(ci[columnstr],averageVal)
+        intraDist = clusterIntraDistance(ci[columnstr],averageVal)
         ret.append(numericMean(intraDist))
     return ret
 
 def numericMean(data):
     return sum(data)/len(data)
 
-def clusterIntraDistanceToAvg(data,avg):
+def clusterIntraDistance(data,avg):
     return [abs(val - avg) for val in data ]
     
-def calcinfradist(pos,neu,neg,data): 
-    return "to be implemented"
-def calcintradist(pos,neu,neg,data):
-    return "to be implemented"
+def meanInterDistance(clusters,columnstr): 
+    avgsForColumns = []
+    for colstr in columnstr:
+        IntraDistForColstr = ClustersMeanInterDistance(clusters,colstr) 
+        avgsForColumns.append(IntraDistForColstr)
+    return avgsForColumns
+
+
+def ClustersMeanInterDistance(Clusters,columnstr):
+    #ret = []
+    averageVals =[]
+    intraDists = []
+    for ci in Clusters:
+        averageVals.append(numericMean(ci[columnstr]))
+    intraDists = clusterInterDistanceToAvg(averageVals)
+    return intraDists#numericMean(intraDists)
+
+def clusterInterDistanceToAvg(Averages):
+    ret = []
+    rowress =[]
+    for singleAvg in Averages:
+        for someOtherAvg in Averages:
+            rowress.append(abs(singleAvg - someOtherAvg))
+        ret.append(rowress)
+        rowress = []   
+    return ret
+
+def PrintAverageforCluster(Clusters,columnstrings):
+    
+    for columnstr in columnstrings:
+        averageVal = []
+        for ci in Clusters:
+            averageVal.append(numericMean(ci[columnstr]))#averageForFeatureInCluster(ci,columnstr)
+        
+        print("AverageValue for " + columnstr +" is " + str(averageVal))
 
     
