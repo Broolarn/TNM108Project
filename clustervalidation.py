@@ -3,8 +3,9 @@ import math
    
 def clusterDistanceMessures(data):
     [pos,neu,neg] = groupdata(data)
-    clusters = [pos,neu,neg]#[pos,neu,neg,data]
+    clusters = [pos,neu,neg]
     columnstrings = ['Len', 'Likes','Retweets']
+    clusters = normClusters(clusters,columnstrings)
     intradist = meanIntraDistance(clusters,columnstrings)
     Interdist = meanInterDistance(clusters,columnstrings)
     return [intradist,Interdist]
@@ -14,6 +15,15 @@ def groupdata(data):
     neu = data[data['SA']==0]
     neg = data[data['SA']<0]
     return [pos,neu,neg]
+
+def normClusters(clusters,columnstr):
+    
+    for cl in clusters:
+        for col in columnstr:
+            maxval = max(cl[col])
+            norm = [float(i)/ maxval for i in cl[col]]
+            cl[col] = norm
+    return clusters
 
 def meanIntraDistance(clusters,columnstr):
     avgsForColumns = []

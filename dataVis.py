@@ -54,3 +54,9 @@ def pieChartSources(deviceData):
     pie_chart = pd.Series(percent, index=sources, name='Sources')
     pie_chart.plot.pie(fontsize=11, autopct='%.2f', figsize=(6, 6))
     plt.show()
+
+def linesPlot(dataframe,Tile,Ylabel):
+    lines = dataframe.plot.line()
+    plt.title(Tile)
+    plt.ylabel(Ylabel)
+    plt.show()

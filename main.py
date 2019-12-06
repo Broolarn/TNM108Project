@@ -45,9 +45,10 @@ if(sentimentAnalysis==True):
 clustering = True
 if(clustering==True):
     [intra,inter] = cval.clusterDistanceMessures(data)
-    mu.printAsMatrix(intra,[['Pos', 'Neu', 'Neg'],['Len', 'Likes','Retweets']],"Intra")
-    mu.printAsMatrix(inter,[['Pos', 'Neu', 'Neg'],['Len', 'Likes','Retweets']],"Inter")
-   
-
-
-
+    intraMatrix = mu.printAsMatrix(intra,[['Pos', 'Neu', 'Neg'],['Len', 'Likes','Retweets']],"Intra")
+    interMatrix = mu.printAsMatrix(inter,[['Pos', 'Neu', 'Neg'],['Len', 'Likes','Retweets']],"Inter")
+    
+    dv.linesPlot(intraMatrix,'Intra','Normed Intra Distance')
+    dv.linesPlot(interMatrix,'Inter','Normed Inter Distance')
+    
+    
