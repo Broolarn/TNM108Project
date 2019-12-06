@@ -12,6 +12,7 @@ import dataVis as dv
 import sentiment as sa
 import pandas as pd
 import clustervalidation as cval
+import mainUtilites as mu
 
 url = r'TwitterData\condensed_2018.json'
 data = pre.preProcs(url)
@@ -44,19 +45,9 @@ if(sentimentAnalysis==True):
 clustering = True
 if(clustering==True):
     [intra,inter] = cval.clusterDistanceMessures(data)
+    mu.printAsMatrix(intra,[['Pos', 'Neu', 'Neg'],['Len', 'Likes','Retweets']],"Intra")
+    mu.printAsMatrix(inter,[['Pos', 'Neu', 'Neg'],['Len', 'Likes','Retweets']],"Inter")
+   
 
-    printavg = False
-    if(printavg ==True):
-        [pos,neu,neg] = cval.groupdata(data)
-        clusters = [pos,neu,neg]#[pos,neu,neg,data]
-        columnstrings = ['Len', 'Likes','Retweets']
-        
-        for x in range(0,len(inter)):
-            print("==============")
-            for y in range(len(inter[0])):
-                print(inter[x][y])
-
-    print("intra distance is: " + str(intra))
-    print("inter distance is: " + str(inter))
 
 
