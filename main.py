@@ -42,7 +42,7 @@ if(sentimentAnalysis==True):
     print(data.head(10))
     [pos_tweets,neu_tweets,neg_tweets] = sa.analize_results(data)
 
-clustering = True
+clustering = False
 if(clustering==True):
     [intra,inter] = cval.clusterDistanceMessures(data)
     intraMatrix = mu.printAsMatrix(intra,[['Pos', 'Neu', 'Neg'],['Len', 'Likes','Retweets']],"Intra")
@@ -51,4 +51,10 @@ if(clustering==True):
     dv.linesPlot(intraMatrix,'Intra','Normed Intra Distance')
     dv.linesPlot(interMatrix,'Inter','Normed Inter Distance')
     
-    
+[AllInterMatrixes,AllIntraMatrixes] = mu.seperatedata(data,10)
+mu.printAllmatrixes([AllInterMatrixes,AllIntraMatrixes] ,['Intra','Inter'])
+
+
+
+
+
