@@ -23,10 +23,40 @@ def seperatedata(data,nrOfSplits):
     return [AllIntraMatrixes,AllInterMatrixes]
 
 def printAllmatrixes(matrixes,titles):
-    
     for i in range(0,len(titles)):
         print(len(matrixes[i]))
         for matrix in matrixes[i]:
             temp=printAsMatrix(matrix,[['Pos', 'Neu', 'Neg'],['Len', 'Likes','Retweets']],titles[i])
 
-      
+def sumMatrix(inmatrix):
+    sumForEachMatrix = []
+    for matrix in inmatrix:
+        sumOfMatrix = []
+        sumOfRow =[]
+        for row in matrix:
+            sumOfRow.append(sum(row))
+        print(sumOfRow)
+        sumOfMatrix.append(sum(sumOfRow))
+        sumForEachMatrix.append(sumOfMatrix)
+        print(sumOfMatrix)    
+        
+    print(min(sumForEachMatrix))
+    return sumForEachMatrix
+
+def findBestClusters(AllInterMatrixes,AllIntraMatrixes):
+    allInterSums = sumMatrix(AllInterMatrixes)
+    allIntraSums = sumMatrix(AllIntraMatrixes)
+    minindex = allInterSums.index(min(allInterSums))
+    maxindex = allIntraSums.index(max(allIntraSums))
+    intercopy = allInterSums
+    intracopy = allIntraSums
+    intercopy.sort()
+    intracopy.sort(reverse=True)
+    minindex = allInterSums.index(min(allInterSums))
+    maxindex = allIntraSums.index(max(allIntraSums))
+
+    #print(allIntraSums.index())
+    print(minindex)
+    print(maxindex)
+    print(allInterSums)
+    print(allIntraSums)
