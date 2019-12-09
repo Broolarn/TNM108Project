@@ -55,3 +55,7 @@ if(clustering==True):
 mu.printAllmatrixes([AllInterMatrixes,AllIntraMatrixes] ,['Intra','Inter'])
 
 mu.findBestClusters(AllInterMatrixes,AllIntraMatrixes)
+
+#mu.bestBasedOnValues(AllInterMatrixes,AllIntraMatrixes)
+
+#mu.bestBasedOnRanking(AllInterMatrixes,AllIntraMatrixes)
