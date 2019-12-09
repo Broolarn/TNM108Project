@@ -13,6 +13,7 @@ import sentiment as sa
 import pandas as pd
 import clustervalidation as cval
 import mainUtilites as mu
+import predictiveModel as pm
 
 url = r'TwitterData\condensed_2018.json'
 data = pre.preProcs(url)
@@ -51,8 +52,9 @@ if(clustering==True):
     dv.linesPlot(intraMatrix,'Intra','Normed Intra Distance')
     dv.linesPlot(interMatrix,'Inter','Normed Inter Distance')
 
+print(" = = = = = = = = = ==")
+[AllInterMatrixes,AllIntraMatrixes,foldData] = mu.seperatedata(data,10)
 
-[AllInterMatrixes,AllIntraMatrixes] = mu.seperatedata(data,10)
-
-cval.findBestClusters(AllInterMatrixes,AllIntraMatrixes)
-
+bestIndex = cval.findBestClusters(AllInterMatrixes,AllIntraMatrixes)
+print(bestIndex)
+[train,test] =  foldData[bestIndex]

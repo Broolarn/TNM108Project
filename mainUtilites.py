@@ -11,14 +11,16 @@ def seperatedata(data,nrOfSplits):
     AllIntraMatrixes = []
     from sklearn.model_selection import KFold
     import clustervalidation as cval
-    cv = KFold(n_splits=nrOfSplits, random_state=42, shuffle=False)
+    cv = KFold(n_splits=nrOfSplits,random_state=None, shuffle=True) #shuffle=True, random_state=1)
+    folddata = []
     for train_index, test_index in cv.split(data):
         X_train = pd.DataFrame(data , index=train_index)
         X_test = pd.DataFrame(data , index=test_index)
         [intra,inter] = cval.clusterDistanceMessures(X_train)
         AllIntraMatrixes.append(intra)
         AllInterMatrixes.append(inter)
-    return [AllIntraMatrixes,AllInterMatrixes]
+        folddata.append([X_train,X_test])
+    return [AllIntraMatrixes,AllInterMatrixes,folddata]
 
 
 def printAllmatrixes(matrixes,titles):

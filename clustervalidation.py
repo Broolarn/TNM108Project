@@ -105,7 +105,8 @@ def findBestClusters(AllInterMatrixes,AllIntraMatrixes):
     combinedBest = []
     for i in range(0,len(vals)):
         combinedBest.append(rank[i]+vals[i])
-    print("Best index at : " + str(combinedBest.index(min(combinedBest))))
+    return combinedBest.index(min(combinedBest))
+    #print("Best index at : " + str(combinedBest.index(min(combinedBest))))
 
 def bestBasedOnValues(AllInterMatrixes,AllIntraMatrixes):
     allInterSums = sumMatrix(AllInterMatrixes)
