@@ -46,17 +46,37 @@ def sumMatrix(inmatrix):
 def findBestClusters(AllInterMatrixes,AllIntraMatrixes):
     allInterSums = sumMatrix(AllInterMatrixes)
     allIntraSums = sumMatrix(AllIntraMatrixes)
-    minindex = allInterSums.index(min(allInterSums))
-    maxindex = allIntraSums.index(max(allIntraSums))
-    intercopy = allInterSums
-    intracopy = allIntraSums
-    intercopy.sort()
-    intracopy.sort(reverse=True)
-    minindex = allInterSums.index(min(allInterSums))
-    maxindex = allIntraSums.index(max(allIntraSums))
+    maxindex = allInterSums.index(max(allInterSums))
+    minindex = allIntraSums.index(min(allIntraSums))
+   
+    intercopy = []
+    for i in allInterSums:
+     intercopy.append(i)
+    intracopy = []
+    for i in allIntraSums:
+     intracopy.append(i)
+ 
+    intercopy.sort(reverse=True)
+    intracopy.sort()
+    indexlistmax =[]
+    indexlistmin = []
+    for i in range(0,len(allInterSums)):
+        indexlistmax.append(allInterSums.index((intercopy[i])))
+        indexlistmin.append(allIntraSums.index((intracopy[i])))
+  
 
-    #print(allIntraSums.index())
     print(minindex)
     print(maxindex)
     print(allInterSums)
     print(allIntraSums)
+    print(intercopy)
+    print(intracopy)
+    print(indexlistmax)
+    print(indexlistmin)
+  
+    rank  =[]
+    for i in range(0,len(indexlistmax)):
+        rank.append(indexlistmax[i]+indexlistmin[i])
+    print(rank)
+    bestClusterIndex = rank.index(min(rank))
+    print(bestClusterIndex)
