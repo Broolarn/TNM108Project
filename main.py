@@ -50,12 +50,9 @@ if(clustering==True):
     
     dv.linesPlot(intraMatrix,'Intra','Normed Intra Distance')
     dv.linesPlot(interMatrix,'Inter','Normed Inter Distance')
-    
+
+
 [AllInterMatrixes,AllIntraMatrixes] = mu.seperatedata(data,10)
-mu.printAllmatrixes([AllInterMatrixes,AllIntraMatrixes] ,['Intra','Inter'])
 
-mu.findBestClusters(AllInterMatrixes,AllIntraMatrixes)
+cval.findBestClusters(AllInterMatrixes,AllIntraMatrixes)
 
-#mu.bestBasedOnValues(AllInterMatrixes,AllIntraMatrixes)
-
-#mu.bestBasedOnRanking(AllInterMatrixes,AllIntraMatrixes)
