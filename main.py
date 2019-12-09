@@ -58,3 +58,6 @@ print(" = = = = = = = = = ==")
 bestIndex = cval.findBestClusters(AllInterMatrixes,AllIntraMatrixes)
 print(bestIndex)
 [train,test] =  foldData[bestIndex]
+pm.createModel(foldData[bestIndex],KPOINTS=10)
+
+
