@@ -13,17 +13,21 @@ import sentiment as sa
 import pandas as pd
 import clustervalidation as cval
 import mainUtilites as mu
+import predictiveModel as pm
 
 url = r'TwitterData\condensed_2018.json'
 data = pre.preProcs(url)
+print(len(data))
+data = data.dropna()
+print(len(data))
 # Display of first 10 elements from DataFrame
 
 showDatastructs = False
 if(showDatastructs==True):
-    print(data.head(10))
+    #print(data.head(10))
     # Pick tweets with more favorits and more retweets:
     mean = np.mean(data['Len'])
-    print("Mean Length in tweets: {}".format(mean))
+  #  print("Mean Length in tweets: {}".format(mean))
 
 vis = False
 if(vis==True):
@@ -39,7 +43,7 @@ if(sentimentAnalysis==True):
     data['SA'] = np.array([ sa.analize_sentiment(tweet) for tweet in data['Tweets'] ])
 
     # We display the updated dataframe with the new column:
-    print(data.head(10))
+ #   print(data.head(10))
     [pos_tweets,neu_tweets,neg_tweets] = sa.analize_results(data)
 
 clustering = False
@@ -50,8 +54,15 @@ if(clustering==True):
     
     dv.linesPlot(intraMatrix,'Intra','Normed Intra Distance')
     dv.linesPlot(interMatrix,'Inter','Normed Inter Distance')
-    
-[AllInterMatrixes,AllIntraMatrixes] = mu.seperatedata(data,10)
-mu.printAllmatrixes([AllInterMatrixes,AllIntraMatrixes] ,['Intra','Inter'])
 
-mu.findBestClusters(AllInterMatrixes,AllIntraMatrixes)
+#print(" = = = = = = = = = ==")
+[AllInterMatrixes,AllIntraMatrixes,foldData] = mu.seperatedata(data,nrOfSplits=5)
+
+bestIndex = cval.findBestClusters(AllInterMatrixes,AllIntraMatrixes)
+#print(bestIndex)
+[train,test] =  foldData[bestIndex]
+[predLikes, predRetweets] = pm.createModel(foldData[bestIndex],KPOINTS=10)
+print("Predicted values")
+print("Likes " + str(predLikes))
+print("Retweets " + str(predRetweets))
+
