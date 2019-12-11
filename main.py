@@ -14,55 +14,20 @@ import pandas as pd
 import clustervalidation as cval
 import mainUtilites as mu
 import predictiveModel as pm
+import summarize as su
 
 url = r'TwitterData\condensed_2018.json'
 data = pre.preProcs(url)
-print(len(data))
-data = data.dropna()
-print(len(data))
-# Display of first 10 elements from DataFrame
 
-showDatastructs = False
-if(showDatastructs==True):
-    #print(data.head(10))
-    # Pick tweets with more favorits and more retweets:
-    mean = np.mean(data['Len'])
-  #  print("Mean Length in tweets: {}".format(mean))
-
-vis = False
-if(vis==True):
-    dv.maxFavsAndRetweets(data['Likes'],data['Retweets'],data)
-    dv.timeSeriesVis([data['Len'].values],data['Date'], ['Len'])
-    dv.timeSeriesVis([data['Likes'].values, data['Retweets'].values],data['Date'], ['Likes','Retweets'])
-    dv.pieChartSources(data["Source"])
-
-
-sentimentAnalysis= True
-if(sentimentAnalysis==True):
-    # We create a column with the result of the analysis:
-    data['SA'] = np.array([ sa.analize_sentiment(tweet) for tweet in data['Tweets'] ])
-
-    # We display the updated dataframe with the new column:
- #   print(data.head(10))
-    [pos_tweets,neu_tweets,neg_tweets] = sa.analize_results(data)
-
-clustering = False
-if(clustering==True):
-    [intra,inter] = cval.clusterDistanceMessures(data)
-    intraMatrix = mu.printAsMatrix(intra,[['Pos', 'Neu', 'Neg'],['Len', 'Likes','Retweets']],"Intra")
-    interMatrix = mu.printAsMatrix(inter,[['Pos', 'Neu', 'Neg'],['Len', 'Likes','Retweets']],"Inter")
+userinput = True
+if(userinput):
+    print()
+    text = input("Enter tweet text to predict: ")
+    SentenceToBePredicted = [text]
     
-    dv.linesPlot(intraMatrix,'Intra','Normed Intra Distance')
-    dv.linesPlot(interMatrix,'Inter','Normed Inter Distance')
+else:
+    #["I am the best builder of walls in all wall builders history , Mexico is bad"]
+    SentenceToBePredicted =  ['I am the best builder of walls in all wall builders history , Mexico is bad']
 
-#print(" = = = = = = = = = ==")
-[AllInterMatrixes,AllIntraMatrixes,foldData] = mu.seperatedata(data,nrOfSplits=5)
-
-bestIndex = cval.findBestClusters(AllInterMatrixes,AllIntraMatrixes)
-#print(bestIndex)
-[train,test] =  foldData[bestIndex]
-[predLikes, predRetweets] = pm.createModel(foldData[bestIndex],KPOINTS=10)
-print("Predicted values")
-print("Likes " + str(predLikes))
-print("Retweets " + str(predRetweets))
+pm.predictionModel(data,SentenceToBePredicted,nrOfLatestTweetsTakenIntoRegard=100)
 

@@ -60,11 +60,60 @@ def LiKeyWords(data):
     #Extract the keywords 
     #print("Top 10 Keywords in positiv tweets:\n",keywords.keywords(postext,words=10))
     return [postext,neutext,negtext]
-  
+def normedAvg(data):
+    total = 0
+    for Tweets in data:
+        normedVal = (Tweets - min(data)) /(max(data)-min(data))
+        total += normedVal
+    normedAvg = total/len(data)  
+    return normedAvg  
 
-def ReLiAverage(data):
+def avgForEachSentiment(posSorted,neuSorted,negSorted,keyString):
+    
+    posRetweet = posSorted[keyString]
+    neuRetweet = neuSorted[keyString]
+    negRetweet = negSorted[keyString]
+
+    averagePos = normedAvg(posRetweet)
+    averageNeu = normedAvg(neuRetweet)
+    averageNeg = normedAvg(negRetweet)
+    printstuff = False   
+    if(printstuff): 
+        print(keyString +' on positvie (average)' + str(averagePos))
+        print(keyString +' on neutral (average) ' + str(averageNeu))
+        print(keyString +' on negativ ' + str(averageNeg))
+    return [averagePos,averageNeu,averageNeg]
+
+def getAvgOfTestTweet(testTweet,normedAveragesForLikesAndRetweets):
+    if(testTweet['SA'] > 0 ):
+        [avgLike , avgRetweet] = normedAveragesForLikesAndRetweets[0]
+    elif(testTweet['SA'] == 0 ):
+        [avgLike , avgRetweet] = normedAveragesForLikesAndRetweets[1]
+    else:
+        [avgLike , avgRetweet] = normedAveragesForLikesAndRetweets[2]
+    return  [avgLike , avgRetweet]
+
+def compareTweetToData(data,testTweet,nrOfLatestTweetsTakenIntoRegard):
+    normedAveragesForLikesAndRetweets = ReLiAverage(data,nrOfLatestTweetsTakenIntoRegard)
+    normedTestValForLike = (testTweet['Likes'] - min(data['Likes']))/(max(data['Likes'])-min(data['Likes']))
+    normedTestValForRetweets = (testTweet['Retweets'] - min(data['Retweets']))/(max(data['Retweets'])-min(data['Retweets']))
+    [avgLike , avgRetweet] = getAvgOfTestTweet(testTweet,normedAveragesForLikesAndRetweets)
+
+    likeRelationToAvg = normedTestValForLike/avgLike
+    retweetRelationToAvg = normedTestValForRetweets/avgRetweet
+
+    avgForData = {'Likes' : avgLike , 'Retweet' : avgRetweet}
+    sample = {'Likes' : normedTestValForLike , 'Retweet' : normedTestValForRetweets}
+    relation = {'Likes' : str(likeRelationToAvg) + "%" , 'Retweet' : str(retweetRelationToAvg)+ "%"}
+    asMatrix = {'NormedAvgsForData' : avgForData , 'NormedValueForSample' : sample,'sampleRelativToDataAvg' : relation}
+    df = pd.DataFrame(asMatrix) 
+    print()
+    print(df)   
+
+
+def ReLiAverage(data,nrOfLatestTweetsTakenIntoRegard):
     [pos,neu,neg] = cv.groupdata(data)
-    numberOfTweets = 100
+    numberOfTweets = nrOfLatestTweetsTakenIntoRegard
     #sort the tweets by the date
     posSorted =  pos.sort_values(by=['Date'], ascending=False)
     neuSorted =  neu.sort_values(by=['Date'], ascending=False)
@@ -74,64 +123,13 @@ def ReLiAverage(data):
     neuSorted = neuSorted.loc[0:100,:]
     negSorted = negSorted.loc[0:100,:]
 
-    posRetweet = posSorted['Retweets']
-    neuRetweet = neuSorted['Retweets']
-    negRetweet = negSorted['Retweets']
+    [averagePosRe,averageNeuRe,averageNegRe] = avgForEachSentiment(posSorted,neuSorted,negSorted,'Retweets')
+    [averagePosLi,averageNeuLi,averageNegLi] = avgForEachSentiment(posSorted,neuSorted,negSorted,'Likes')
+    posVals = [averagePosLi, averagePosRe]
+    neuVals = [averageNeuLi, averageNeuRe]
+    negVals = [averageNegLi,averageNegRe]
+    return[posVals , neuVals, negVals]
  
-    totalPosRetweet = 0
-    totalNeuRetweet = 0
-    totalNegRetweet = 0
-    for Tweets in posRetweet:
-        newposRe = (Tweets - min(posRetweet)) /(max(posRetweet)-min(posRetweet))
-        totalPosRetweet += newposRe
-    averagePosRe = totalPosRetweet/len(posRetweet)  
-
-    for Tweets in neuRetweet:
-        newneuRe = (Tweets - min(neuRetweet)) /(max(neuRetweet)-min(neuRetweet))
-        totalNeuRetweet += newneuRe
-    averageNeuRe = totalNeuRetweet/len(neuRetweet)
-
-    for Tweets in negRetweet:
-        newnegRe = (Tweets - min(negRetweet)) /(max(negRetweet)-min(negRetweet))
-        totalNegRetweet += newnegRe
-    averageNegRe = totalNegRetweet/len(negRetweet)
-
-    
-    print('retweet on positvie (average)' + str(averagePosRe))
-    print('retweet on neutral (average) ' + str(averageNeuRe))
-    print('retweet on negativ ' + str(averageNegRe))
-
-
-    posSorted = posSorted['Likes']
-    neuSorted = neuSorted['Likes']
-    negSorted = negSorted['Likes']   
-   
-    totalPosLikes = 0
-    totalNeuLikes = 0
-    totalNegLikes = 0
-
-    for Tweets in posSorted:
-        newposTweet = (Tweets - min(posSorted)) /(max(posSorted)-min(posSorted))
-        totalPosLikes += newposTweet 
-    averagePosLi = totalPosLikes/len(posSorted)
-
-    for Tweets in neuSorted:
-        newneuTweet = (Tweets - min(neuSorted)) /(max(neuSorted)-min(neuSorted))
-        totalNeuLikes += newneuTweet 
-    averageNeuLi = totalNeuLikes/len(neuSorted)
-
-    for Tweets in negSorted:
-        newnegTweet = (Tweets - min(negSorted)) /(max(negSorted)-min(negSorted))
-        totalNegLikes += newnegTweet
-    averageNegLi = totalNegLikes/len(negSorted)
-
-    print( 'likes on positive (average): ' + str(averagePosLi))
-    print( 'likes on neutral (average): ' + str(averageNeuLi))
-    print( 'likes on negative (average): '+ str(averageNegLi))
-
-    return[averagePosLi, averagePosRe , averageNeuLi, averageNeuRe ,averageNegLi,averageNegRe ]
- 
-
 
 def averageRetweet(data):
     numberOfTweets =100

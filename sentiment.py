@@ -21,12 +21,16 @@ def analize_sentiment(tweet):
     else:
         return -1
 
+def howDoesDataLook(data,pos_tweets,neu_tweets,neg_tweets):
+    print()
+    print("Percentage of positive tweets: {}%".format(len(pos_tweets)*100/len(data['Tweets'])))
+    print("Percentage of neutral tweets: {}%".format(len(neu_tweets)*100/len(data['Tweets'])))
+    print("Percentage de negative tweets: {}%".format(len(neg_tweets)*100/len(data['Tweets'])))
+
+
 def analize_results(data):
     # We construct lists with classified tweets:
     pos_tweets = [ tweet for index, tweet in enumerate(data['Tweets']) if data['SA'][index] > 0]
     neu_tweets = [ tweet for index, tweet in enumerate(data['Tweets']) if data['SA'][index] == 0]
     neg_tweets = [ tweet for index, tweet in enumerate(data['Tweets']) if data['SA'][index] < 0]
-    print("Percentage of positive tweets: {}%".format(len(pos_tweets)*100/len(data['Tweets'])))
-    print("Percentage of neutral tweets: {}%".format(len(neu_tweets)*100/len(data['Tweets'])))
-    print("Percentage de negative tweets: {}%".format(len(neg_tweets)*100/len(data['Tweets'])))
     return [pos_tweets,neu_tweets,neg_tweets]

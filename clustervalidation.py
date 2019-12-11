@@ -19,10 +19,11 @@ def groupdata(data):
 def normClusters(clusters,columnstr):
     
     for cl in clusters:
+        cl = cl.copy()
         for col in columnstr:
             maxval = max(cl[col])
-            norm = [float(i)/ maxval for i in cl[col]]
-            cl[col] = norm
+            cl.loc[:,col] = [float(i)/ maxval for i in cl[col]]
+            #cl[col] = norm
     return clusters
 
 def meanIntraDistance(clusters,columnstr):
@@ -99,15 +100,17 @@ def sumMatrix(inmatrix):
 def findBestClusters(AllInterMatrixes,AllIntraMatrixes):
     rank = bestBasedOnRanking(AllInterMatrixes,AllIntraMatrixes)
     vals = bestBasedOnValues(AllInterMatrixes,AllIntraMatrixes)
-    print("Rankbased: " + str(rank))
-    print("Valsbased: " + str(vals))
-
+   
     combinedBest = []
     for i in range(0,len(vals)):
         combinedBest.append(rank[i]+vals[i])
-    return combinedBest.index(min(combinedBest))
-    #print("Best index at : " + str(combinedBest.index(min(combinedBest))))
+    printResult = False
+    if(printResult):
+        print("Rankbased: " + str(rank))
+        print("Valsbased: " + str(vals))
+        print("Best index at : " + str(combinedBest.index(min(combinedBest))))
 
+    return combinedBest.index(min(combinedBest))
 def bestBasedOnValues(AllInterMatrixes,AllIntraMatrixes):
     allInterSums = sumMatrix(AllInterMatrixes)
     allIntraSums = sumMatrix(AllIntraMatrixes)
