@@ -82,17 +82,20 @@ def ReLiAverage(data):
     totalNeuRetweet = 0
     totalNegRetweet = 0
     for Tweets in posRetweet:
-        totalPosRetweet = posRetweet.sum()
+        newposRe = (Tweets - min(posRetweet)) /(max(posRetweet)-min(posRetweet))
+        totalPosRetweet += newposRe
+    averagePosRe = totalPosRetweet/len(posRetweet)  
 
-    for Tweets in posRetweet:
-        totalNeuRetweet = neuRetweet.sum()
+    for Tweets in neuRetweet:
+        newneuRe = (Tweets - min(neuRetweet)) /(max(neuRetweet)-min(neuRetweet))
+        totalNeuRetweet += newneuRe
+    averageNeuRe = totalNeuRetweet/len(neuRetweet)
 
-    for Tweets in posRetweet:
-        totalNegRetweet = negRetweet.sum()
+    for Tweets in negRetweet:
+        newnegRe = (Tweets - min(negRetweet)) /(max(negRetweet)-min(negRetweet))
+        totalNegRetweet += newnegRe
+    averageNegRe = totalNegRetweet/len(negRetweet)
 
-    averagePosRe = totalPosRetweet / posRetweet.size
-    averageNeuRe = totalNeuRetweet / neuRetweet.size
-    averageNegRe = totalNegRetweet / negRetweet.size
     
     print('retweet on positvie (average)' + str(averagePosRe))
     print('retweet on neutral (average) ' + str(averageNeuRe))
@@ -108,16 +111,19 @@ def ReLiAverage(data):
     totalNegLikes = 0
 
     for Tweets in posSorted:
-        totalPosLikes += Tweets
-    averagePosLi = totalPosLikes/numberOfTweets
+        newposTweet = (Tweets - min(posSorted)) /(max(posSorted)-min(posSorted))
+        totalPosLikes += newposTweet 
+    averagePosLi = totalPosLikes/len(posSorted)
 
     for Tweets in neuSorted:
-        totalNeuLikes += Tweets
-    averageNeuLi = totalNeuLikes/numberOfTweets
+        newneuTweet = (Tweets - min(neuSorted)) /(max(neuSorted)-min(neuSorted))
+        totalNeuLikes += newneuTweet 
+    averageNeuLi = totalNeuLikes/len(neuSorted)
 
     for Tweets in negSorted:
-        totalNegLikes += Tweets
-    averageNegLi = totalNegLikes/numberOfTweets
+        newnegTweet = (Tweets - min(negSorted)) /(max(negSorted)-min(negSorted))
+        totalNegLikes += newnegTweet
+    averageNegLi = totalNegLikes/len(negSorted)
 
     print( 'likes on positive (average): ' + str(averagePosLi))
     print( 'likes on neutral (average): ' + str(averageNeuLi))
