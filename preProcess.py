@@ -5,9 +5,9 @@ import sentiment as sa
 
 def preProcs(fileurl):
     tweets = pd.read_json (fileurl)
-    print (tweets)
-    print(tweets.size)
-    print(tweets.columns)
+    #print (tweets)
+    #print(tweets.size)
+    #print(tweets.columns)
     tweetid = tweets['id_str']
     sourceDevice = tweets['source']
     twitterTexts = tweets['text']
