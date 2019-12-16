@@ -22,7 +22,7 @@ def predictionModel(data, testsentence,nrOfLatestTweetsTakenIntoRegard=100):
     print("The provided tweet is predicted to have: ")
     print(str(predLikes) + " likes , " + str(predRetweets) + " retweets , " + str(predSA) + " as sentiment")
 
-    su.compareTweetToData(data,testTweet,nrOfLatestTweetsTakenIntoRegard)
+    su.compareTweetToData(train,testTweet,nrOfLatestTweetsTakenIntoRegard)
 
 def createPrediction(bestClusteringFold,KPOINTS, testsentence):
     [train,test] = bestClusteringFold

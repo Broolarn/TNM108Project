@@ -22,8 +22,8 @@ def normClusters(clusters,columnstr):
         cl = cl.copy()
         for col in columnstr:
             maxval = max(cl[col])
-            cl.loc[:,col] = [float(i)/ maxval for i in cl[col]]
-            #cl[col] = norm
+            minval = min(cl[col])
+            cl.loc[:,col] = [(float(i)-minval)/ (maxval-minval) for i in cl[col]]
     return clusters
 
 def meanIntraDistance(clusters,columnstr):
@@ -36,7 +36,7 @@ def meanIntraDistance(clusters,columnstr):
 def ClustersMeanIntraDistance(Clusters,columnstr):
     ret = []
     for ci in Clusters:
-        averageVal = numericMean(ci[columnstr])#averageForFeatureInCluster(ci,columnstr)
+        averageVal = numericMean(ci[columnstr])
         intraDist = clusterIntraDistance(ci[columnstr],averageVal)
         ret.append(numericMean(intraDist))
     return ret

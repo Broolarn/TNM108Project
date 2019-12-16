@@ -4,66 +4,61 @@ import clustervalidation as cv
 import pandas as pd
 #from main import data 
 
+def normRelativeToData(subdataset , minval,maxval):
+    norm = maxval - minval
+    normedset = [(tweet - minval)/(norm)  for tweet in subdataset]
+    return normedset
 
-#Extract the keywords from positive/negative/neutral tweets  
-def reKeyWords(data):
-    [pos,neu,neg] = cv.groupdata(data)
-    numberOfTweets = 100
+def sumLikesAndRetweetsForN(data,N = 100):
+    latestTweets = data.head(N)    
 
-    posSorted =  pos.sort_values(by=['Retweets'], ascending=False)
-    neuSorted =  neu.sort_values(by=['Retweets'], ascending=False)
-    negSorted =  neg.sort_values(by=['Retweets'], ascending=False)
+    normedLikes = normRelativeToData(latestTweets['Likes'].head(N) , min(data['Likes']),max(data['Likes']))
+    normedRetweets = normRelativeToData(latestTweets['Retweets'].head(N) , min(data['Retweets']),max(data['Retweets']))
 
-    posSortedTweets = posSorted['Tweets'].head(numberOfTweets)
-    neuSortedTweets = neuSorted['Tweets'].head(numberOfTweets)
-    negSortedTweets = negSorted['Tweets'].head(numberOfTweets)
-
-    postext = ''
-    neutext = ''
-    negtext = ''
-    for Tweets in posSortedTweets:
-        postext += Tweets
-    for Tweets in neuSortedTweets:
-        neutext += Tweets
-    for Tweets in negSortedTweets:
-        negtext += Tweets
-
+    normedAvgLikes = sum(normedLikes) / N
+    normedAvgRetweets = sum(normedRetweets)/ N
     
-    return [postext,neutext,negtext]
+    print("Relations")
+    dataLikeAvg = normedAvg(data['Likes'])
+    dataRetweetAvg = normedAvg(data['Retweets'])
 
+    likeRelationToAvg = normedAvgLikes/dataLikeAvg
+    retweetRelationToAvg = normedAvgRetweets/dataRetweetAvg
 
-def LiKeyWords(data):
-   
-    [pos,neu,neg] = cv.groupdata(data)
-    numberOfTweets = 100
-    #sort the tweets by the number of likes
-    posSorted =  pos.sort_values(by=['Likes'], ascending=False)
-    neuSorted =  neu.sort_values(by=['Likes'], ascending=False)
-    negSorted =  neg.sort_values(by=['Likes'], ascending=False)
+    print("Summary of N last tweets compared to data")
+    avgForData = {'Likes' :dataLikeAvg  , 'Retweet' : dataRetweetAvg}
+    lastNsamples = {'Likes' :  normedAvgLikes, 'Retweet' : normedAvgRetweets}
+    relation = {'Likes' : str(likeRelationToAvg) + "%" , 'Retweet' : str(retweetRelationToAvg)+ "%"}
+    asMatrix = {'NormedAvgsForData' : avgForData , 'NormedValueForNLastSamples' : lastNsamples,'samplesRelativToDataAvg' : relation}
+    df = pd.DataFrame(asMatrix) 
+    print(df)   
 
+def keywordsFromNLast(data, N = 100):
     #Extract a certent number of tweets
-    posSortedTweets = posSorted['Tweets'].head(numberOfTweets)
-    neuSortedTweets = neuSorted['Tweets'].head(numberOfTweets)
-    negSortedTweets = negSorted['Tweets'].head(numberOfTweets)
+    nSortedTweets = data['Tweets'].head(N)
 
     #Convert the Data Frames to stings 
-    postext = ''
-    neutext = ''
-    negtext = ''
-    for Tweets in posSortedTweets:
-        postext += Tweets
-    for Tweets in neuSortedTweets:
-        neutext += Tweets
-    for Tweets in negSortedTweets:
-        negtext += Tweets
+    text = ''
+    for Tweets in nSortedTweets:
+        text += Tweets
+    
+    keywordsOfText = keywords.keywords(text,words=10).split('\n')
+    
+    print("Top 10 Keywords in N last tweets:")
+    print(keywordsOfText)
 
-    #Extract the keywords 
-    #print("Top 10 Keywords in positiv tweets:\n",keywords.keywords(postext,words=10))
-    return [postext,neutext,negtext]
+def sumNLastTweets(data,N = 100):
+    sumLikesAndRetweetsForN(data,N = N)
+    keywordsFromNLast(data, N = N)
+
+    
 def normedAvg(data):
     total = 0
+    maxval = max(data)
+    minval = min(data)
+    norm = maxval - minval
     for Tweets in data:
-        normedVal = (Tweets - min(data)) /(max(data)-min(data))
+        normedVal = (Tweets - minval) /(norm)
         total += normedVal
     normedAvg = total/len(data)  
     return normedAvg  
@@ -93,7 +88,7 @@ def getAvgOfTestTweet(testTweet,normedAveragesForLikesAndRetweets):
         [avgLike , avgRetweet] = normedAveragesForLikesAndRetweets[2]
     return  [avgLike , avgRetweet]
 
-def compareTweetToData(data,testTweet,nrOfLatestTweetsTakenIntoRegard):
+def compareTweetToData(data,testTweet,nrOfLatestTweetsTakenIntoRegard = 100):
     normedAveragesForLikesAndRetweets = ReLiAverage(data,nrOfLatestTweetsTakenIntoRegard)
     normedTestValForLike = (testTweet['Likes'] - min(data['Likes']))/(max(data['Likes'])-min(data['Likes']))
     normedTestValForRetweets = (testTweet['Retweets'] - min(data['Retweets']))/(max(data['Retweets'])-min(data['Retweets']))
@@ -101,28 +96,24 @@ def compareTweetToData(data,testTweet,nrOfLatestTweetsTakenIntoRegard):
 
     likeRelationToAvg = normedTestValForLike/avgLike
     retweetRelationToAvg = normedTestValForRetweets/avgRetweet
-
+    print()
+    print("Predicted tweet compared to data avg: ")
     avgForData = {'Likes' : avgLike , 'Retweet' : avgRetweet}
     sample = {'Likes' : normedTestValForLike , 'Retweet' : normedTestValForRetweets}
     relation = {'Likes' : str(likeRelationToAvg) + "%" , 'Retweet' : str(retweetRelationToAvg)+ "%"}
     asMatrix = {'NormedAvgsForData' : avgForData , 'NormedValueForSample' : sample,'sampleRelativToDataAvg' : relation}
     df = pd.DataFrame(asMatrix) 
-    print()
     print(df)   
 
 
-def ReLiAverage(data,nrOfLatestTweetsTakenIntoRegard):
+def ReLiAverage(data,nrOfLatestTweetsTakenIntoRegard = 100):
     [pos,neu,neg] = cv.groupdata(data)
-    numberOfTweets = nrOfLatestTweetsTakenIntoRegard
-    #sort the tweets by the date
-    posSorted =  pos.sort_values(by=['Date'], ascending=False)
-    neuSorted =  neu.sort_values(by=['Date'], ascending=False)
-    negSorted =  neg.sort_values(by=['Date'], ascending=False)
-    
-    posSorted = posSorted.loc[0:100,:]
-    neuSorted = neuSorted.loc[0:100,:]
-    negSorted = negSorted.loc[0:100,:]
+    numberOfTweets = 100
 
+    posSorted = pos.loc[0:numberOfTweets,:]
+    neuSorted = neu.loc[0:numberOfTweets,:]
+    negSorted = neg.loc[0:numberOfTweets,:]
+   
     [averagePosRe,averageNeuRe,averageNegRe] = avgForEachSentiment(posSorted,neuSorted,negSorted,'Retweets')
     [averagePosLi,averageNeuLi,averageNegLi] = avgForEachSentiment(posSorted,neuSorted,negSorted,'Likes')
     posVals = [averagePosLi, averagePosRe]
@@ -159,11 +150,64 @@ def sumRetweet(data):
     retweettext = ''
     for Tweets in retweetSortedTweets: 
         retweettext += Tweets
-       
-    
+           
     print("Top 3 Keywords in Retweets:\n",keywords.keywords(retweettext,words=10))   
     print('End of function sumReTweet')
 
+
+# #Extract the keywords from positive/negative/neutral tweets  
+# def reKeyWords(data,numberOfTweets):
+#     [pos,neu,neg] = cv.groupdata(data)
+    
+#     posSorted =  pos.sort_values(by=['Retweets'], ascending=False)
+#     neuSorted =  neu.sort_values(by=['Retweets'], ascending=False)
+#     negSorted =  neg.sort_values(by=['Retweets'], ascending=False)
+
+#     posSortedTweets = posSorted['Tweets'].head(numberOfTweets)
+#     neuSortedTweets = neuSorted['Tweets'].head(numberOfTweets)
+#     negSortedTweets = negSorted['Tweets'].head(numberOfTweets)
+
+#     postext = ''
+#     neutext = ''
+#     negtext = ''
+#     for Tweets in posSortedTweets:
+#         postext += Tweets
+#     for Tweets in neuSortedTweets:
+#         neutext += Tweets
+#     for Tweets in negSortedTweets:
+#         negtext += Tweets
+
+    
+#     return [postext,neutext,negtext]
+
+
+# def LiKeyWords(data,numberOfTweets):
+   
+#     [pos,neu,neg] = cv.groupdata(data)
+#     #sort the tweets by the number of likes
+#     posSorted =  pos.sort_values(by=['Likes'], ascending=False)
+#     neuSorted =  neu.sort_values(by=['Likes'], ascending=False)
+#     negSorted =  neg.sort_values(by=['Likes'], ascending=False)
+
+#     #Extract a certent number of tweets
+#     posSortedTweets = posSorted['Tweets'].head(numberOfTweets)
+#     neuSortedTweets = neuSorted['Tweets'].head(numberOfTweets)
+#     negSortedTweets = negSorted['Tweets'].head(numberOfTweets)
+
+#     #Convert the Data Frames to stings 
+#     postext = ''
+#     neutext = ''
+#     negtext = ''
+#     for Tweets in posSortedTweets:
+#         postext += Tweets
+#     for Tweets in neuSortedTweets:
+#         neutext += Tweets
+#     for Tweets in negSortedTweets:
+#         negtext += Tweets
+
+#     #Extract the keywords 
+#     print("Top 10 Keywords in positiv tweets:\n",keywords.keywords(postext,words=10))
+#     return [postext,neutext,negtext]
 
 
 

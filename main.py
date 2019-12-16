@@ -26,8 +26,15 @@ if(userinput):
     SentenceToBePredicted = [text]
     
 else:
-    #["I am the best builder of walls in all wall builders history , Mexico is bad"]
-    SentenceToBePredicted =  ['I am the best builder of walls in all wall builders history , Mexico is bad']
+    SentenceToBePredicted =  ['I am the best builder of walls in all wall builders history , Mexico is bad'] #["I am the best builder of walls in all wall builders history , Mexico is bad"]
 
 pm.predictionModel(data,SentenceToBePredicted,nrOfLatestTweetsTakenIntoRegard=100)
 
+if(userinput):
+    print()
+    NrOfSamples = input("How many of the recent tweets you want to summarize? ")
+    NrOfSamples = int(NrOfSamples)    
+else:
+    NrOfSamples = 100
+
+su.sumNLastTweets(data,N = NrOfSamples)
