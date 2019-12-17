@@ -10,12 +10,22 @@ import clustervalidation as cval
 import summarize as su
 nltk.download('punkt')
 
-def predictionModel(data, testsentence,nrOfLatestTweetsTakenIntoRegard=100):
+def makePrediction(data,testsentence):
     [AllInterMatrixes,AllIntraMatrixes,foldData] = mu.seperatedata(data,nrOfSplits=5)
     bestIndex = cval.findBestClusters(AllInterMatrixes,AllIntraMatrixes)
     [train,test] =  foldData[bestIndex]
 
     [predLikes, predRetweets,predSA] = createPrediction(foldData[bestIndex],KPOINTS=10,testsentence=testsentence)
+    return [predLikes, predRetweets,predSA,train]
+    
+
+def predictionModel(data, testsentence,nrOfLatestTweetsTakenIntoRegard=100):
+    [predLikes, predRetweets,predSA,train] = makePrediction(data,testsentence)
+    # [AllInterMatrixes,AllIntraMatrixes,foldData] = mu.seperatedata(data,nrOfSplits=5)
+    # bestIndex = cval.findBestClusters(AllInterMatrixes,AllIntraMatrixes)
+    # [train,test] =  foldData[bestIndex]
+
+    # [predLikes, predRetweets,predSA] = createPrediction(foldData[bestIndex],KPOINTS=10,testsentence=testsentence)
     testTweet = {'Tweets' : testsentence, 'Likes' :predLikes, 'Retweets' : predRetweets, 'SA' : predSA}
     
     print()
@@ -23,6 +33,7 @@ def predictionModel(data, testsentence,nrOfLatestTweetsTakenIntoRegard=100):
     print(str(predLikes) + " likes , " + str(predRetweets) + " retweets , " + str(predSA) + " as sentiment")
 
     su.compareTweetToData(train,testTweet,nrOfLatestTweetsTakenIntoRegard)
+
 
 def createPrediction(bestClusteringFold,KPOINTS, testsentence):
     [train,test] = bestClusteringFold
@@ -73,3 +84,38 @@ def textstuff(test,train):
         print(mostSimilarTweets)
     return [predictedLikes,predictedRetweets]
 
+def predictivModelEvaluation(traindata, testdata):
+    totalErrorLikes = []
+    totalErrorRetweets = []
+    print(len(testdata))
+    for i in range(0,len(testdata)):
+        if(i % 100 == 0):
+            print(i)
+        [predLikes, predRetweets,predSA,train] = makePrediction(traindata,testdata['Tweets'][i])
+        totalErrorLikes.append(abs(testdata['Likes'][i]-predLikes))
+        totalErrorRetweets.append(abs(testdata['Retweets'][i]-predRetweets))
+    
+    avgErrorLikes = sum(totalErrorLikes) / len(totalErrorLikes)
+    avgErrorRetweets = sum(totalErrorRetweets) / len(totalErrorRetweets)
+
+    print("Likes avg error : " + str(avgErrorLikes))
+    print("Retweets avg error : " + str(avgErrorRetweets))
+    
+    totalErrorLikes.sort()
+    totalErrorRetweets.sort()
+     
+    medianErrorLikes = medianError(totalErrorLikes)
+    medianErrorRetweets = medianError(totalErrorRetweets)
+
+    print("Likes median error : " + str(medianErrorLikes))
+    print("Retweets median error : " + str(medianErrorRetweets))
+    
+
+def medianError(data):
+    length = len(data)
+    if (length % 2 == 0):
+        medianError = (data[(length)//2] + data[(length)//2-1]) / 2
+    else:
+        medianError = data[(length-1)//2]
+
+    return medianError

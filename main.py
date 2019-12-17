@@ -37,3 +37,9 @@ else:
     NrOfSamples = 100
 
 su.sumNLastTweets(data,N = NrOfSamples)
+
+
+data2018 = pre.preProcs(url)
+url2017 = r'TwitterData\condensed_2017.json'
+data2017 = pre.preProcs(url2017)
+pm.predictivModelEvaluation(data2017,data2018)
