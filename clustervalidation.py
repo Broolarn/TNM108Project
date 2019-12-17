@@ -100,7 +100,7 @@ def sumMatrix(inmatrix):
 def findBestClusters(AllInterMatrixes,AllIntraMatrixes):
     rank = bestBasedOnRanking(AllInterMatrixes,AllIntraMatrixes)
     vals = bestBasedOnValues(AllInterMatrixes,AllIntraMatrixes)
-   
+    
     combinedBest = []
     for i in range(0,len(vals)):
         combinedBest.append(rank[i]+vals[i])

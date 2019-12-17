@@ -48,7 +48,6 @@ def preProcs(fileurl):
         dv.linesPlot(intraMatrix,'Intra','Normed Intra Distance')
         dv.linesPlot(interMatrix,'Inter','Normed Inter Distance')
 
-
     return data
 
 

@@ -73,34 +73,3 @@ def textstuff(test,train):
         print(mostSimilarTweets)
     return [predictedLikes,predictedRetweets]
 
-
-def findClosestMatchs(features,testTweet,KPOINTS,NDIM):
-    import numpy
-    #NDIM = 3 # number of dimensions
-
-    from numpy import transpose
-    a = np.array(features)
-    a = a.transpose()
-    a.shape = int(a.size / NDIM), NDIM
-    
-    from scipy.spatial import KDTree
-    tree = KDTree(a, leafsize=a.shape[0]+1)
-    [distances, ndx] = tree.query([testTweet], k=KPOINTS)
-
-    closestMatches = a[ndx]
-    interpolated = interpolateClosestMatch(closestMatches) 
-    print(closestMatches)
-    print("interpolated: ")
-    print( interpolated)
-
-def interpolateClosestMatch(closestMatches):
-    Lendata  = closestMatches[0,:,0]
-    Likesdata  = closestMatches[0,:,1]
-    Retweetsdata  = closestMatches[0,:,2]
-    length = len(Lendata) 
-    avgLendata  = sum(Lendata) / length 
-    avgLikesdata  = sum(Likesdata) / length 
-    avgRetweetsdata  = sum(Retweetsdata) / length 
-    
-    return [avgLendata,avgLikesdata,avgRetweetsdata]
-   

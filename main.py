@@ -18,7 +18,6 @@ import summarize as su
 
 url = r'TwitterData\condensed_2018.json'
 data = pre.preProcs(url)
-
 userinput = True
 if(userinput):
     print()

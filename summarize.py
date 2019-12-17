@@ -154,6 +154,10 @@ def sumRetweet(data):
     print("Top 3 Keywords in Retweets:\n",keywords.keywords(retweettext,words=10))   
     print('End of function sumReTweet')
 
+#################################################################
+# Section below was not used for final product but used if you  #
+# want to implement something based on most liked/retweeted     #
+#################################################################
 
 # #Extract the keywords from positive/negative/neutral tweets  
 # def reKeyWords(data,numberOfTweets):
